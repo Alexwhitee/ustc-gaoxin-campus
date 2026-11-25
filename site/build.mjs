@@ -10,6 +10,7 @@ const routes = {
 const languages = Object.keys(routes);
 const output = new URL('./dist/', import.meta.url);
 const assets = ['site.css', 'site.js', '_headers', 'assets/library.webp', 'assets/lake.webp', 'assets/room.webp', 'assets/sandbox.webp'];
+const deploymentFiles = ['_worker.js', '_routes.json'];
 const siteUrl = process.env.PROJECT_SITE_URL ? new URL(process.env.PROJECT_SITE_URL) : null;
 if (siteUrl) {
   assert(['http:', 'https:'].includes(siteUrl.protocol) && !siteUrl.username && !siteUrl.password &&
@@ -169,7 +170,7 @@ for (const [path, html] of pages) {
 }
 
 await mkdir(new URL('assets/', output), { recursive: true });
-for (const name of assets) {
+for (const name of [...assets, ...deploymentFiles]) {
   await copyFile(new URL(name, import.meta.url), new URL(name, output));
 }
 for (const [path, html] of pages) {

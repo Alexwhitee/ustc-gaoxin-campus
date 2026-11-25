@@ -1,5 +1,5 @@
 export const repository = 'https://github.com/Alexwhitee/ustc-gaoxin-campus';
-export const liveGame = 'https://ustc-gaoxin-lakeside.r3694211.workers.dev/gaoxin-sandbox/index.html?room=LAKESIDE';
+export const liveGame = 'https://ustc-gaoxin-campus.pages.dev/gaoxin-sandbox/index.html?room=LAKESIDE';
 
 export const commands = `git clone ${repository}.git
 cd ustc-gaoxin-campus

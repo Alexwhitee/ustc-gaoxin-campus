@@ -2,7 +2,7 @@
 
 用键盘和鼠标从图书教育中心走到永怀湖。支持第一人称探索、实时多人同房、校园打卡和像素校园互见。地图覆盖 31 座建筑，游戏实时渲染建筑立面、阴影与湖面反射。
 
-[公开试玩 · LAKESIDE](https://ustc-gaoxin-lakeside.r3694211.workers.dev/gaoxin-sandbox/index.html?room=LAKESIDE) · [项目介绍](https://ustc-gaoxin-campus.pages.dev/) · [运行手册](https://ustc-gaoxin-campus.pages.dev/guide/) · [English setup](https://ustc-gaoxin-campus.pages.dev/en/guide/)
+[公开试玩 · LAKESIDE](https://ustc-gaoxin-campus.pages.dev/gaoxin-sandbox/index.html?room=LAKESIDE) · [项目介绍](https://ustc-gaoxin-campus.pages.dev/) · [运行手册](https://ustc-gaoxin-campus.pages.dev/guide/) · [English setup](https://ustc-gaoxin-campus.pages.dev/en/guide/)
 
 ## 湖畔信标 · 1–20 人沙盒
 
@@ -25,7 +25,7 @@ GAOXIN_PORT=3158 GAOXIN_UPSTREAM=http://127.0.0.1:3157 npm run campus:3d
 node scripts/build-sandbox-public.mjs
 wrangler deploy --config wrangler.sandbox.toml
 PROJECT_SITE_URL=https://ustc-gaoxin-campus.pages.dev/ node site/build.mjs
-wrangler pages deploy site/dist --project-name ustc-gaoxin-campus --branch main
+(cd site && wrangler pages deploy --branch main)
 ```
 
 如需自托管带账户的版本，在服务端启动 Next.js 与一个 `campus:3d` 房间进程，将 HTTPS 反向代理指向房间网关端口。代理需传递原始 `Host` 以及 WebSocket 的 `Upgrade` 和 `Connection` 头。
@@ -307,8 +307,8 @@ PROJECT_SITE_URL=https://ustc-gaoxin-campus.pages.dev/ node site/build.mjs
 python3 -m http.server 4184 --bind 127.0.0.1 --directory site/dist
 ```
 
-使用已登录的 Wrangler，通过 Cloudflare Pages Direct Upload 发布静态产物。生产分支为 `main`。
+使用已登录的 Wrangler，通过 Cloudflare Pages Direct Upload 发布。生产分支为 `main`。`site/wrangler.toml` 把官网的游戏路径绑定到试玩 Worker，介绍和手册由 Pages 直接提供。
 
 ```bash
-WRANGLER_SEND_METRICS=false wrangler pages deploy site/dist --project-name ustc-gaoxin-campus --branch main
+(cd site && WRANGLER_SEND_METRICS=false wrangler pages deploy --branch main)
 ```

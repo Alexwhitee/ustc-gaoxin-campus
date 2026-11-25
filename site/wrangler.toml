@@ -1,0 +1,7 @@
+name = "ustc-gaoxin-campus"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-02-20"
+
+[[services]]
+binding = "PLAYTEST"
+service = "ustc-gaoxin-lakeside"
