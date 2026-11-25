@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#182420">
+<link rel="icon" href="data:,">
+<title>中科大高新校区 · 3D 漫游</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main id="game" aria-label="高新校区第一人称漫游"></main>
+<header class="top">
+  <div class="identity"><span class="pin" aria-hidden="true"></span><div><strong>中科大高新校区</strong><small>第一人称 3D 漫游</small></div></div>
+  <div class="top-actions"><span id="status" role="status">正在铺设校园</span><button id="share" type="button">复制房间链接</button><button id="change-room" type="button">切换房间</button></div>
+</header>
+<aside class="objective">
+  <p id="chapter">校园打卡</p><h2 id="objective-title">图书教育中心</h2>
+  <p id="objective-detail">在图教中心集合</p>
+  <div class="progress" aria-hidden="true"><i></i><i></i></div>
+</aside>
+<aside class="corner">
+  <canvas width="176" height="176" id="map" aria-label="校园小地图"></canvas>
+  <label class="sr-only" for="destination">选择导航目的地</label><select id="destination"><option value="">任务指引</option></select>
+</aside>
+<span class="crosshair" aria-hidden="true"></span>
+<p id="prompt" class="prompt" hidden></p>
+<p id="message" class="message" role="status" hidden></p>
+<section id="entry" class="entry" aria-labelledby="welcome">
+  <div><p class="eyebrow">图教中心 · 永怀湖</p><h1 id="welcome">进入高新校区</h1><p id="entry-copy">从图教中心出发，沿湖边走一走。</p></div>
+  <button type="button" id="enter" disabled>正在加载…</button>
+  <p class="hints"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 行走 <span>鼠标 转头</span><span><kbd>E</kbd> 互动</span></p>
+</section>
+<dialog id="rooms">
+  <form id="room-form">
+    <h2>切换房间</h2>
+    <label>房间号<input id="room-input" maxlength="20" pattern="[a-zA-Z0-9\-]{1,20}" required></label>
+    <label>显示名<input id="name-input" maxlength="18" placeholder="留空时使用站内昵称或访客名"></label>
+    <div><button type="button" id="cancel-room">取消</button><button type="submit" class="primary">进入房间</button></div>
+  </form>
+</dialog>
+<footer>
+  <div><kbd>WASD</kbd> 行走 <span>·</span> <kbd>E</kbd> 互动 <span>·</span> <kbd>Esc</kbd> 释放鼠标 <span id="fps"></span></div>
+  <div><a id="overview" href="./overview.html">全校总览</a><a href="/campus?campus=ustc-gaoxin">像素校园</a><a id="other-mode" href="?mode=campus">校园互见</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></div>
+</footer>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+<script type="module" src="./game.js"></script>
+</body>
+</html>

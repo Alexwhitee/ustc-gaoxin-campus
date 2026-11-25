@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 226 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 226 70% 55%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* 像素风文字（校园地图 HUD 用）
+ * 首选自托管像素字体 Fusion Pixel（把 woff2 放到 app/fonts/ 并在 layout 中注册 @font-face 即可自动生效）；
+ * 未部署字体文件时回退到系统字体栈 + 关闭平滑/抗锯齿，保持硬边 determination 观感。 */
+:root {
+  --pixel-font: "Fusion Pixel 12px monospaced";
+}
+
+@font-face {
+  font-family: "Fusion Pixel 12px monospaced";
+  src:
+    url("./fonts/fusion-pixel-12px-monospaced-zh_hans.otf.woff2") format("woff2"),
+    url("./fonts/fusion-pixel-12px-monospaced-latin.otf.woff2") format("woff2"),
+    local("Fusion Pixel 12px monospaced"),
+    local("Zpix"),
+    local("Fusion Pixel 12px");
+  font-display: swap;
+}
+
+.pixel-font {
+  font-family: var(--pixel-font), "PingFang SC", "Microsoft YaHei", ui-monospace, monospace;
+  letter-spacing: 0.02em;
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  font-smooth: never;
+}
+
+.pixel-border {
+  box-shadow:
+    0 -3px 0 0 #fef3c7,
+    0 3px 0 0 #b45309,
+    -3px 0 0 0 #fbbf24,
+    3px 0 0 0 #fbbf24;
+}

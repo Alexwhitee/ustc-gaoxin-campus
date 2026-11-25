@@ -1,0 +1,30 @@
+# /etc/systemd/system/jluai.service
+# 服务器上执行：systemctl daemon-reload && systemctl enable --now jluai
+[Unit]
+Description=JLUAI (Next.js standalone: 论坛 + 像素校园)
+After=network.target
+
+[Service]
+Type=simple
+User=jluai
+Group=jluai
+WorkingDirectory=/opt/jluai/src
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+Environment=TZ=Asia/Shanghai
+Environment=NEXT_TELEMETRY_DISABLED=1
+Environment=DATABASE_PATH=/opt/jluai/data/jluai.db
+EnvironmentFile=-/opt/jluai/.env
+ExecStart=/usr/bin/node /opt/jluai/src/server.js
+Restart=always
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/jluai/data /opt/jluai/src/.next/cache
+
+[Install]
+WantedBy=multi-user.target

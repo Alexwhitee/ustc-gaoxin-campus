@@ -1,0 +1,10 @@
+node_modules/
+.next/
+data/
+*.tsbuildinfo
+.env*
+!.env.example
+.env.local
+backups/
+
+site/dist/
