@@ -8,6 +8,7 @@ const key='gaoxin-sandbox:';
 const valid=/^[A-Z0-9-]{1,20}$/;
 let room=(params.get('room')||'LAKESIDE').toUpperCase(),socket,geometry,map,view;
 let online=false,playing=false,closing=false,seq=0,pending=[],action,fire=false,dragging=false,retry,noticeTimer;
+let lastInputSignature='',lastInputAt=0;
 let me={...GARAGE,id:'intro',yaw:-.18,pitch:0,hp:100,tool:0},visual={...me},yaw=.08,pitch=-.10;
 let driving,muted=false,context,engine,engineGain,angle=0,nextStep=0;
 let state={tick:0,cars:[],beacons:[],players:[],bots:[],shots:[],roster:[],score:0,total:0};
@@ -176,7 +177,7 @@ function lock() {
 
 function connect() {
   const protocol=location.protocol==='https:'?'wss:':'ws:';
-  const ws=new WebSocket(protocol+'//'+location.host+'/gaoxin-sandbox/socket');
+  const ws=new WebSocket(protocol+'//'+location.host+'/gaoxin-sandbox/socket?room='+encodeURIComponent(room));
   socket=ws;
   ws.onopen=()=>ws.send(JSON.stringify({type:'join',protocol:PROTOCOL,version:map.version,room,
     token:sessionStorage.getItem(key+room),name:$('name').value}));
@@ -189,7 +190,7 @@ function connect() {
     }
     if(data.type==='notice'){notice(data.message);sound('event');}
     if(data.type==='joined'){
-      seq=data.ack;pending=[];online=true;playing=true;
+      seq=data.ack;pending=[];lastInputSignature='';online=true;playing=true;
       sessionStorage.setItem(key+room,data.token);
       $('front').hidden=true;$('hud').hidden=false;
       $('focus').hidden=!!document.pointerLockElement;
@@ -218,6 +219,11 @@ function sendInput() {
   if(!online||socket?.readyState!==WebSocket.OPEN||socket.bufferedAmount>12_000)return;
   const side=Number(keys.has('KeyD'))-Number(keys.has('KeyA'));
   const forward=Number(keys.has('KeyW'))-Number(keys.has('KeyS'));
+  const signature=[side,forward,yaw,pitch,keys.has('Space'),fire].join(',');
+  const now=performance.now();
+  const rolling=driving&&Math.hypot(driving.vx,driving.vy)>.05;
+  if(!side&&!forward&&!fire&&!action&&!rolling&&signature===lastInputSignature&&now-lastInputAt<1000)return;
+  lastInputSignature=signature;lastInputAt=now;
   const input={type:'input',seq:++seq,side,forward,yaw,pitch,brake:keys.has('Space'),fire,action};
   action=null;
   socket.send(JSON.stringify(input));
@@ -319,6 +325,10 @@ async function boot() {
     fetch('/gaoxin-sandbox/room-health',{cache:'no-store'}).then(r=>r.ok?r.json():null),
   ]);
   if(health?.protocol!==PROTOCOL||health.version!==world.version)throw Error('请从实时房间网关进入沙盒。');
+  if(health.guestOnly){
+    $('campus-link').href='https://ustc-gaoxin-campus.pages.dev/';
+    text('campus-link','返回项目官网');
+  }
   map=world;geometry=sandboxGeometry(map);prepareMap();
   view=await createSandboxView($('scene'),map,geometry);
   view.quality($('quality').value);

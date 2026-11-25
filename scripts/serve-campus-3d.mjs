@@ -81,7 +81,7 @@ async function account(req) {
 server.on('upgrade', (req,socket,head) => {
   let origin;
   try { origin = new URL(req.headers.origin); } catch {}
-  const isSandbox=req.url===sandboxPath+'/socket';
+  const isSandbox=req.url.split('?',1)[0]===sandboxPath+'/socket';
   if ((!isSandbox && req.url !== '/gaoxin-3d/socket') || origin?.host !== req.headers.host ||
       !['http:','https:'].includes(origin?.protocol) || wss.clients.size >= 256) {
     socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');

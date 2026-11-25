@@ -1,10 +1,10 @@
-// Pass this expression to playwright-cli run-code. The sandbox gateway must listen on port 3158.
+// Open the local or public sandbox, then pass this expression to playwright-cli run-code.
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- Playwright CLI evaluates this function.
 async page=>{
   const another=await page.context().browser().newContext({viewport:{width:1440,height:900}});
   const second=await another.newPage();
   const name='QA'+Date.now().toString(36).toUpperCase();
-  const url='http://127.0.0.1:3158/gaoxin-sandbox/index.html?room='+name;
+  const url=new URL('/gaoxin-sandbox/index.html?room='+name,page.url()).href;
   const states=new Map(),errors=[];
   function monitor(tab) {
     const model={};states.set(tab,model);

@@ -1,0 +1,17 @@
+name = "ustc-gaoxin-lakeside"
+main = "deploy/sandbox-worker.mjs"
+compatibility_date = "2026-02-20"
+workers_dev = true
+preview_urls = false
+
+[assets]
+directory = ".sandbox-dist"
+html_handling = "none"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "SandboxRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SandboxRoom"]

@@ -1,5 +1,3 @@
-import { randomBytes } from 'node:crypto';
-import { WebSocket } from 'ws';
 import { cleanName } from '../public/gaoxin-3d/world.mjs';
 import {
   aim, avatarHit, distance, DELIVERY, GARAGE, GATES, HOTSPOTS, PROTOCOL, RESUME_MS, ROOM_SIZE,
@@ -13,8 +11,9 @@ const neutral={side:0,forward:0,brake:true};
 const cooldown=100;
 const activityDuration=1800;
 const inputTypes=['interact','swap','fire'];
+const randomHex=length=>Array.from(crypto.getRandomValues(new Uint8Array(length)),b=>b.toString(16).padStart(2,'0')).join('');
 const send=(socket,data)=>{
-  if(socket?.readyState===WebSocket.OPEN && socket.bufferedAmount<48_000)socket.send(JSON.stringify(data));
+  if(socket?.readyState===1 && socket.bufferedAmount<48_000)socket.send(JSON.stringify(data));
 };
 const solidDenial=(ws,message,code=4002)=>{send(ws,{type:'error',message});ws.close(code);};
 const vehicle=(x,y,i)=>({id:'car'+i,x,y,homeX:x,homeY:y,yaw:0,vx:0,vy:0,driver:null,paint:0,hp:100,idle:0});
@@ -216,7 +215,7 @@ export function createSandboxRooms(map,{clock=Date.now,readProgress=()=>0,writeP
         if(existing&&!existing.ws&&existing.until>=now&&existing.account===(profile?.id??null))p=existing;
         if(!p){
           if(r.players.size>=ROOM_SIZE){solidDenial(ws,'这个房间已满，请另建房间。',4003);return;}
-          const id=randomBytes(5).toString('hex'),token=randomBytes(24).toString('hex');
+          const id=randomHex(5),token=randomHex(24);
           let total=0;
           if(profile?.id)try{total=readProgress(profile.id);}catch{}
           p={id,token,name:cleanName(profile?.name||m.name)||'漫游者 '+id.slice(-4).toUpperCase(),
