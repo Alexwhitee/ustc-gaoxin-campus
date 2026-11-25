@@ -1,10 +1,12 @@
-# 中科大高新校区 · 3D 漫游
+# 中科大高新校区 · 湖畔信标
 
 用键盘和鼠标从图书教育中心走到永怀湖。支持第一人称探索、实时多人同房、校园打卡和像素校园互见。地图覆盖 31 座建筑，游戏实时渲染建筑立面、阴影与湖面反射。
 
-[项目介绍](https://ustc-gaoxin-campus.pages.dev/) · [运行手册](https://ustc-gaoxin-campus.pages.dev/guide/) · [English setup](https://ustc-gaoxin-campus.pages.dev/en/guide/)
+[公开试玩 · LAKESIDE](https://ustc-gaoxin-lakeside.r3694211.workers.dev/gaoxin-sandbox/index.html?room=LAKESIDE) · [项目介绍](https://ustc-gaoxin-campus.pages.dev/) · [运行手册](https://ustc-gaoxin-campus.pages.dev/guide/) · [English setup](https://ustc-gaoxin-campus.pages.dev/en/guide/)
 
 ## 湖畔信标 · 1–20 人沙盒
+
+把公开试玩链接发给同学，大家可以在电脑浏览器以访客身份进入同一个 LAKESIDE 房间。访客房间状态和积分随该局运行，公开试玩无需账户。
 
 从南门车库出生，开电动车配送，或前往湖岸和红砖广场争夺信标。在任一交付站按 E 结算。安全区以外可以自由交战，单人房间会有 NPC 守卫。用 WASD 移动或开车，鼠标瞄准，左键发射，Q 切换装备，空格手刹，E 上下车和互动，Esc 释放鼠标。
 
@@ -17,7 +19,16 @@ GAOXIN_PORT=3158 GAOXIN_UPSTREAM=http://127.0.0.1:3157 npm run campus:3d
 
 打开[湖畔信标](http://127.0.0.1:3158/gaoxin-sandbox/?room=LAKESIDE)。同房链接最多 20 位玩家，随时加入或退出。断线后有 30 秒恢复窗口，退出时释放车辆和信标。登录玩家的累计积分写入独立的 `data/campus-sandbox.db`，可用 `GAOXIN_SANDBOX_DB` 指定数据卷位置。
 
-正式托管时在服务端启动 Next.js 与一个 `campus:3d` 房间进程，HTTPS 反向代理指向房间网关端口。代理需传递原始 `Host` 及 WebSocket 的 `Upgrade` 和 `Connection` 头。访客从同一域名加载网页并建立 WSS 连接。Cloudflare Pages 上的介绍站可以链接到这个游戏入口。
+公开试玩由 Cloudflare Workers 托管游戏和 HTTPS/WSS，Durable Objects 按房间运行游戏逻辑。拥有该 Cloudflare 项目权限时，可以用以下命令更新公开服务。
+
+```bash
+node scripts/build-sandbox-public.mjs
+wrangler deploy --config wrangler.sandbox.toml
+PROJECT_SITE_URL=https://ustc-gaoxin-campus.pages.dev/ node site/build.mjs
+wrangler pages deploy site/dist --project-name ustc-gaoxin-campus --branch main
+```
+
+如需自托管带账户的版本，在服务端启动 Next.js 与一个 `campus:3d` 房间进程，将 HTTPS 反向代理指向房间网关端口。代理需传递原始 `Host` 以及 WebSocket 的 `Upgrade` 和 `Connection` 头。
 
 ```bash
 node --test tests/gaoxin-3d.node-test.mjs tests/gaoxin-sandbox.node-test.mjs

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { posix } from 'node:path';
-import { commands, content, game, repository, roomCommand } from './content.mjs';
+import { commands, content, game, liveGame, repository, roomCommand } from './content.mjs';
 
 const routes = {
   'zh-CN': { home: '', guide: 'guide/' },
@@ -9,7 +9,7 @@ const routes = {
 };
 const languages = Object.keys(routes);
 const output = new URL('./dist/', import.meta.url);
-const assets = ['site.css', 'site.js', '_headers', 'assets/library.webp', 'assets/lake.webp', 'assets/room.webp'];
+const assets = ['site.css', 'site.js', '_headers', 'assets/library.webp', 'assets/lake.webp', 'assets/room.webp', 'assets/sandbox.webp'];
 const siteUrl = process.env.PROJECT_SITE_URL ? new URL(process.env.PROJECT_SITE_URL) : null;
 if (siteUrl) {
   assert(['http:', 'https:'].includes(siteUrl.protocol) && !siteUrl.username && !siteUrl.password &&
@@ -19,6 +19,7 @@ if (siteUrl) {
 
 const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const escape = value => value.replace(/[&<>"']/g, char => entities[char]);
+const playOnline = copy => `<a class="button" href="${escape(liveGame)}">${escape(copy.playOnline)} <span aria-hidden="true">↗</span></a>`;
 const group = (items, render) => items.map(render).join('\n');
 const relative = (from, to) => {
   const path = posix.relative(from || '.', to || '.');
@@ -38,7 +39,8 @@ function renderHome(copy, href, asset) {
     <h1>${group(copy.title, line => `<span>${escape(line)}</span>`)}</h1>
     <p class="lead">${escape(copy.summary)}</p>
     <div class="actions">
-      <a class="button" href="${href('guide')}">${escape(copy.start)} <span aria-hidden="true">↗</span></a>
+      ${playOnline(copy)}
+      <a class="quiet" href="${href('guide')}">${escape(copy.start)}</a>
       <a class="quiet" href="#explore">${escape(copy.homeMore)} <span aria-hidden="true">↓</span></a>
     </div>
   </div>
@@ -61,6 +63,7 @@ function renderGuide(copy) {
   const sections = Object.entries(copy.sections);
   const code = text => `<pre tabindex="0"><code>${escape(text)}</code></pre>`;
   const extras = {
+    online: playOnline(copy),
     install: code(commands), room: code(roomCommand),
     play: `<a class="button" href="${game}">${escape(copy.openGame)} <span aria-hidden="true">↗</span></a>`,
     troubleshooting: code('curl http://127.0.0.1:3108/gaoxin-3d/room-health'),
