@@ -108,8 +108,8 @@ function render(lang, kind) {
   <title>${escape(title)} | ${escape(copy.name)}</title>
   <meta name="description" content="${escape(description)}">${metadata}
   <link rel="icon" href="data:,">
+  <script src="${relative(path, 'site.js')}"></script>
   <link rel="stylesheet" href="${relative(path, 'site.css')}">
-  <script src="${relative(path, 'site.js')}" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">${escape(copy.skip)}</a>
