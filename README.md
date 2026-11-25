@@ -4,6 +4,29 @@
 
 [项目介绍](https://ustc-gaoxin-campus.pages.dev/) · [运行手册](https://ustc-gaoxin-campus.pages.dev/guide/) · [English setup](https://ustc-gaoxin-campus.pages.dev/en/guide/)
 
+## 湖畔信标 · 1–20 人沙盒
+
+从南门车库出生，开电动车配送，或前往湖岸和红砖广场争夺信标。在任一交付站按 E 结算。安全区以外可以自由交战，单人房间会有 NPC 守卫。用 WASD 移动或开车，鼠标瞄准，左键发射，Q 切换装备，空格手刹，E 上下车和互动，Esc 释放鼠标。
+
+安装 Node.js 22 与依赖后，从仓库根目录在两个终端分别执行以下命令。
+
+```bash
+npm run dev -- --hostname 127.0.0.1 --port 3157
+GAOXIN_PORT=3158 GAOXIN_UPSTREAM=http://127.0.0.1:3157 npm run campus:3d
+```
+
+打开[湖畔信标](http://127.0.0.1:3158/gaoxin-sandbox/?room=LAKESIDE)。同房链接最多 20 位玩家，随时加入或退出。断线后有 30 秒恢复窗口，退出时释放车辆和信标。登录玩家的累计积分写入独立的 `data/campus-sandbox.db`，可用 `GAOXIN_SANDBOX_DB` 指定数据卷位置。
+
+正式托管时在服务端启动 Next.js 与一个 `campus:3d` 房间进程，HTTPS 反向代理指向房间网关端口。代理需传递原始 `Host` 及 WebSocket 的 `Upgrade` 和 `Connection` 头。访客从同一域名加载网页并建立 WSS 连接。Cloudflare Pages 上的介绍站可以链接到这个游戏入口。
+
+```bash
+node --test tests/gaoxin-3d.node-test.mjs tests/gaoxin-sandbox.node-test.mjs
+node tests/gaoxin-sandbox-soak.mjs 1800
+uv run --python 3.11 --with bpy==5.0.1 python scripts/build-sandbox-art.py
+```
+
+`tests/gaoxin-sandbox.browser.js` 可通过 Playwright CLI 的 `run-code` 实测两个桌面窗口。[参考项目与迁移记录](TOOLING.md)记录了源码版本和适配范围。
+
 ## 快速开始
 
 安装 Node.js 22，并使用支持 WebGL 2 的桌面浏览器。将项目克隆后，运行：

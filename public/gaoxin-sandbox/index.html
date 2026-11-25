@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142323">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+  <title>湖畔信标 · 高新沙盒</title>
+</head>
+<body>
+  <main id="scene" aria-label="湖畔信标游戏画面"></main>
+  <section class="front" id="front" aria-labelledby="title">
+    <header><span class="brand-mark" aria-hidden="true"></span> 高新沙盒</header>
+    <div class="welcome">
+      <p class="district">红砖广场 / 永怀湖</p>
+      <h1 id="title">湖畔信标</h1>
+      <p class="intro">从南门车库出发。开车交付物资，或赶去湖岸，把信标带回任一交付站。</p>
+      <form id="join">
+        <div class="fields">
+          <label>房间号<input id="room" type="text" maxlength="20" pattern="[A-Za-z0-9\-]{1,20}" required autocomplete="off"></label>
+          <label>显示名<input id="name" type="text" maxlength="18" placeholder="访客" autocomplete="off"></label>
+        </div>
+        <button id="enter" disabled>正在加载校园…</button>
+      </form>
+      <p id="entry-status" class="status" role="status">1–20 人 · 随时加入 · 单人可玩</p>
+      <a class="quiet" href="/gaoxin-3d/">切换校园漫游</a>
+    </div>
+    <div class="front-foot"><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></span><span>键盘 + 鼠标</span></div>
+  </section>
+  <div id="hud" hidden>
+    <header class="top">
+      <div class="identity"><span class="brand-mark" aria-hidden="true"></span><div><strong>湖畔信标</strong><span id="status" role="status"></span></div></div>
+      <div class="toolbar">
+        <button id="invite" type="button">邀请好友</button>
+        <button id="sound" type="button" aria-pressed="false">静音</button>
+        <label class="quality">画质<select id="quality"><option value="low">低</option><option value="medium" selected>中</option><option value="high">高</option></select></label>
+        <button id="leave" type="button">退出</button>
+      </div>
+    </header>
+    <section class="objective">
+      <p id="zone" class="caption"></p>
+      <h2 id="objective"></h2>
+      <p id="route"></p>
+    </section>
+    <aside class="map-frame" aria-label="战术地图">
+      <canvas id="map" width="214" height="174" aria-label="显示车辆、信标和路线"></canvas>
+      <div class="legend"><span><i class="gold"></i>信标</span><span><i class="aqua"></i>配送</span><span><i class="white"></i>车辆</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" aria-label="© OpenStreetMap contributors">© OSM</a></div>
+    </aside>
+    <div id="reticle" aria-hidden="true"></div>
+    <div id="action" hidden></div>
+    <div class="notice" id="notice" role="status" hidden></div>
+    <div id="recover" class="notice" hidden>正在返回车库…</div>
+    <section class="summary" aria-label="角色状态">
+      <div><span class="caption">状态</span><strong id="health">100</strong><meter id="health-bar" min="0" max="100" value="100"></meter></div>
+      <div><span class="caption" id="kit-label">装备</span><strong id="kit">脉冲短枪</strong><small id="speed" hidden></small></div>
+      <div><span class="caption">积分</span><strong id="score">0</strong><small id="rank"></small></div>
+    </section>
+    <p class="keys"><kbd>WASD</kbd> 移动 · <kbd>E</kbd> 互动 · <kbd>Q</kbd> 切换 · <kbd>鼠标</kbd> 瞄准/发射 · <kbd>空格</kbd> 手刹 · <kbd>Esc</kbd> 释放鼠标</p>
+    <button id="focus" type="button" hidden>继续操控</button>
+    <ol id="roster" hidden></ol>
+  </div>
+  <script type="importmap">{"imports":{"three":"/gaoxin-3d/vendor/three.module.js"}}</script>
+  <script type="module" src="./game.mjs"></script>
+</body>
+</html>

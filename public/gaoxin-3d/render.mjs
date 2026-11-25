@@ -52,14 +52,14 @@ function paintedLabel(name, accent = '#e2f0e0') {
   return sprite;
 }
 
-export function createCampusRenderer(host, map) {
+export function createCampusRenderer(host, map, {dusk=false}={}) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(69,1,.12,470);
   camera.rotation.order = 'YXZ';
   const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   host.append(renderer.domElement);
-  const moveLight=campusLighting(renderer,scene);
+  const moveLight=campusLighting(renderer,scene,dusk);
   const look=campusMaterials();
   const ground=new THREE.PlaneGeometry(map.half*2,map.half*2);
   const base = new THREE.Mesh(tileUV(ground,map.half/3),look.surfaces.earth);
@@ -229,17 +229,29 @@ export function createCampusRenderer(host, map) {
   }
 
   let pixelRatio = 0;
+  let qualityLevel = 'default';
+  const ratioLimit = { low:.75, medium:1, high:1.4 };
   function resize() {
-    const quality= Math.min(devicePixelRatio||1,innerWidth>1450?1:1.3);
+    const quality= Math.min(devicePixelRatio||1,ratioLimit[qualityLevel]??(innerWidth>1450?1:1.3));
     if (pixelRatio!==quality) {pixelRatio=quality;renderer.setPixelRatio(quality);}
     renderer.setSize(innerWidth,innerHeight,false);
     camera.aspect=innerWidth/Math.max(1,innerHeight);camera.updateProjectionMatrix();
   }
   addEventListener('resize',resize);resize();
-  return {scene,camera,renderer,mark,draw(p,peers,yaw,pitch,now) {
+  return {scene,camera,renderer,mark,setQuality(value) {
+    qualityLevel=value;
+    if(lake){lake.userData.reflection=value!=='low';lake.getRenderTarget().setSize(value==='high'?896:640,value==='high'?512:384);}
+    const light=scene.children.find(o=>o.isDirectionalLight);
+    if(light){
+      light.shadow.mapSize.setScalar(value==='high'?2048:value==='low'?768:1536);
+      light.shadow.map?.dispose();light.shadow.map=null;light.shadow.needsUpdate=true;
+    }
+    resize();
+  },draw(p,peers,yaw,pitch,now,pose) {
     moveLight(p.x,p.y,updateChunks(p.x,p.y));
     updatePlayers(p,peers,now);
     camera.position.set(p.x,1.66,-p.y);camera.rotation.set(pitch,yaw,0,'YXZ');
+    pose?.(camera);
     if(lake)lake.material.uniforms.clock.value=now;
     renderer.render(scene,camera);
   },get mounted(){return mounted.size;}};

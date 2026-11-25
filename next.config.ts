@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
       "./node_modules/three/build/three.module.js",
       "./node_modules/three/build/three.core.js",
       "./node_modules/three/examples/jsm/objects/Reflector.js",
+      "./node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "./node_modules/three/examples/jsm/utils/BufferGeometryUtils.js",
     ],
   },
   poweredByHeader: false,

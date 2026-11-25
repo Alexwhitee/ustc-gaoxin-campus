@@ -76,7 +76,7 @@ function surfaceTexture(kind) {
   return texture;
 }
 
-function skyline() {
+function skyline(dusk) {
   const canvas=document.createElement('canvas');canvas.width=768;canvas.height=384;
   const ctx=canvas.getContext('2d');
   const img=ctx.createImageData(canvas.width,canvas.height);
@@ -95,9 +95,10 @@ function skyline() {
       } else {
         const billow=Math.sin(angle*4.0+up*19.0)+.63*Math.sin(angle*9.0-up*27.0)+.29*Math.sin(angle*22.0+up*49.0);
         const cloud=Math.max(0,billow-.59)*.30*Math.max(0,1-Math.abs(up-.22)*2.75);
-        img.data[p]=206-111*blend+cloud*73+haze*46+sun*176;
+        const warm=dusk?Math.max(0,1-up*4)*(.55+.45*Math.cos(angle-sunAzimuth)):0;
+        img.data[p]=206-111*blend+cloud*73+haze*46+sun*176+warm*40;
         img.data[p+1]=222-65*blend+cloud*62+haze*19+sun*154;
-        img.data[p+2]=227-23*blend+cloud*52+haze*4+sun*112;
+        img.data[p+2]=227-23*blend+cloud*52+haze*4+sun*112-warm*45;
       }
       img.data[p+3]=255;
     }
@@ -108,17 +109,18 @@ function skyline() {
   return t;
 }
 
-export function campusLighting(renderer,scene) {
+export function campusLighting(renderer,scene,dusk) {
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.14;
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  scene.background=skyline();
+  scene.background=skyline(dusk);
   scene.environment=scene.background;
   scene.environmentIntensity=.69;
   scene.fog=new THREE.Fog(0xb7c7c8,139,325);
   const sky=new THREE.HemisphereLight(0xe1f2ff,0x746956,.80);
-  const key=new THREE.DirectionalLight(0xffead1,2.24);
+  const key=new THREE.DirectionalLight(dusk?0xffcc9d:0xffead1,2.24);
+  const direction=dusk?new THREE.Vector3(-.75,.48,.42).normalize():sunDirection;
   key.castShadow=true;
   const shadow=key.shadow;
   shadow.autoUpdate=false;
@@ -133,7 +135,7 @@ export function campusLighting(renderer,scene) {
     const tx=Math.floor(x/32)*32+16,tz=Math.floor(-north/32)*32+16;
     if(!changed&&key.target.position.x===tx&&key.target.position.z===tz)return;
     key.target.position.set(tx,0,tz);
-    key.position.copy(key.target.position).addScaledVector(sunDirection,187);
+    key.position.copy(key.target.position).addScaledVector(direction,187);
     shadow.needsUpdate=true;
   };
 }
@@ -344,7 +346,7 @@ export function createLake(shapes,polygons) {
     const x=camera.position.x,y=-camera.position.z;
     const dx=Math.max(0,bounds.min.x-x,x-bounds.min.x-bounds.size.x);
     const dy=Math.max(0,bounds.min.y-y,y-bounds.min.y-bounds.size.y);
-    const near=Math.hypot(dx,dy)<95;
+    const near=lake.userData.reflection!==false && Math.hypot(dx,dy)<95;
     uniforms.reflectWeight.value=near?1:0;
     const now=uniforms.clock.value;
     if(!near||now-last<.065)return;

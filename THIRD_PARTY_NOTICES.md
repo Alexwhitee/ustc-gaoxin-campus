@@ -4,3 +4,4 @@
 - **Pocket City**。`public/gaoxin-3d/overview.html` 和 `public/gaoxin-walk/index.html` 保留了 April Zhu 与 Tolga Cohce 的原有版权声明和 MIT 许可证。
 - **Fusion Pixel Font**。`app/fonts/` 中的字体由 TakWolf 提供，遵循 SIL Open Font License 1.1。随附[上游许可证](app/fonts/LICENSE-OFL.txt)。[项目源码](https://github.com/TakWolf/fusion-pixel-font)
 - **Three.js**。3D 渲染和 Reflector 插件由 Three.js 提供，遵循 MIT 许可证。通过 `package.json` 安装依赖。[上游许可证](https://github.com/mrdoob/three.js/blob/dev/LICENSE)
+- **Arcade vehicle dynamics**。沙盒驾驶的速度投影和侧向抓地力逻辑改编自 Chris Sparks 提供的 MIT 代码。随附[许可与版权声明](public/gaoxin-sandbox/LICENSE-VEHICLE.txt)。[固定版本源码](https://github.com/depixeled-chris/gta7/blob/bd5ee61af4759881c235077605d33be9342108e8/src/vehicles/VehicleModel.ts)

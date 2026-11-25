@@ -12,28 +12,28 @@ function pointInRing(x, y, ring) {
   return inside;
 }
 
-function touchesRing(x, y, ring) {
+function touchesRing(x, y, ring, radius) {
   for (let i = 0; i < ring.length; i++) {
     const [ax,ay] = ring[i], [bx,by] = ring[(i + 1) % ring.length];
     const dx = bx - ax, dy = by - ay;
     const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy || 1)));
-    if ((x - ax - t * dx) ** 2 + (y - ay - t * dy) ** 2 < RADIUS ** 2) return true;
+    if ((x - ax - t * dx) ** 2 + (y - ay - t * dy) ** 2 < radius ** 2) return true;
   }
   return false;
 }
 
-export function createCollision(map) {
+export function createCollision(map, radius = RADIUS) {
   const colliders = map.solids.map(rings => {
     const xs = rings[0].map(p => p[0]), ys = rings[0].map(p => p[1]);
-    return {rings, a: Math.min(...xs)-RADIUS, b: Math.max(...xs)+RADIUS,
-      c: Math.min(...ys)-RADIUS, d: Math.max(...ys)+RADIUS};
+    return {rings, a: Math.min(...xs)-radius, b: Math.max(...xs)+radius,
+      c: Math.min(...ys)-radius, d: Math.max(...ys)+radius};
   });
   return (x, y) => Number.isFinite(x) && Number.isFinite(y) &&
-    Math.max(Math.abs(x), Math.abs(y)) <= map.half - RADIUS &&
+    Math.max(Math.abs(x), Math.abs(y)) <= map.half - radius &&
     !colliders.some(({rings, a, b, c, d}) => {
       if (x < a || x > b || y < c || y > d) return false;
       const [outer, ...holes] = rings;
-      return rings.some(ring => touchesRing(x, y, ring)) ||
+      return rings.some(ring => touchesRing(x, y, ring, radius)) ||
         (pointInRing(x, y, outer) && !holes.some(ring => pointInRing(x, y, ring)));
     });
 }
